@@ -8,6 +8,7 @@ import java.util.Objects;
 /**
  * 幂等 MQ 消费状态枚举
  */
+@Getter
 @RequiredArgsConstructor
 public enum IdempotentMQConsumeStatusEnum {
     
@@ -21,7 +22,6 @@ public enum IdempotentMQConsumeStatusEnum {
      */
     CONSUMED("1");
     
-    @Getter
     private final String code;
     
     /**
