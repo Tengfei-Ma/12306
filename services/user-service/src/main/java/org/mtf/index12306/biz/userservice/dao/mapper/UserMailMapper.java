@@ -13,5 +13,5 @@ public interface UserMailMapper extends BaseMapper<UserMailDO> {
      * 注销用户
      * @param userMailDO 注销用户入参
      */
-    void deletionUser(@Param("userMailDO")UserMailDO userMailDO);
+    void deletionUser(UserMailDO userMailDO);
 }

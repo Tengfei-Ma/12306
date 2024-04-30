@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean hasUsername(String username) {
         boolean hasUsername = userRegisterCachePenetrationBloomFilter.contains(username);
-        if(hasUsername){
+        if (hasUsername) {
             StringRedisTemplate instance = (StringRedisTemplate) distributedCache.getInstance();
             return instance.opsForSet().isMember(USER_REGISTER_REUSE_SHARDING + hashShardingIdx(username), username);
         }
@@ -96,10 +96,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRegisterRespDTO register(UserRegisterReqDTO requestParam) {
 
-        abstractChainContext.handler(USER_REGISTER_FILTER.name(),requestParam);
-        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER+requestParam.getUsername());
+        abstractChainContext.handler(USER_REGISTER_FILTER.name(), requestParam);
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER + requestParam.getUsername());
         boolean tryLock = lock.tryLock();
-        if(!tryLock){
+        if (!tryLock) {
             throw new ServiceException(HAS_USERNAME_NOTNULL);
         }
         try {
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService {
                 throw new ServiceException(PHONE_REGISTERED);
             }
             if (StrUtil.isNotBlank(requestParam.getMail())) {
-                UserMailDO userMailDO =new UserMailDO();
+                UserMailDO userMailDO = new UserMailDO();
                 userMailDO.setMail(requestParam.getMail());
                 userMailDO.setUsername(requestParam.getUsername());
                 try {
@@ -132,18 +132,17 @@ public class UserServiceImpl implements UserService {
                     throw new ServiceException(MAIL_REGISTERED);
                 }
             }
-            String username= requestParam.getUsername();
+            String username = requestParam.getUsername();
             UserReuseDO userReuseDO = new UserReuseDO();
             userReuseDO.setUsername(username);
             userReuseMapper.delete(Wrappers.update(userReuseDO));
             StringRedisTemplate instance = (StringRedisTemplate) distributedCache.getInstance();
             instance.opsForSet().remove(USER_REGISTER_REUSE_SHARDING + hashShardingIdx(username), username);
             userRegisterCachePenetrationBloomFilter.add(username);
-        }
-        finally {
+        } finally {
             lock.unlock();
         }
-        return BeanUtil.convert(requestParam,UserRegisterRespDTO.class);
+        return BeanUtil.convert(requestParam, UserRegisterRespDTO.class);
     }
 
     @Override
@@ -157,7 +156,7 @@ public class UserServiceImpl implements UserService {
             LambdaUpdateWrapper<UserMailDO> updateWrapper = Wrappers.lambdaUpdate(UserMailDO.class)
                     .eq(UserMailDO::getMail, userQueryRespDTO.getMail());
             userMailMapper.delete(updateWrapper);
-            UserMailDO userMailDO =new  UserMailDO();
+            UserMailDO userMailDO = new UserMailDO();
             userMailDO.setMail(requestParam.getMail());
             userMailDO.setUsername(requestParam.getUsername());
             userMailMapper.insert(userMailDO);
@@ -176,7 +175,7 @@ public class UserServiceImpl implements UserService {
         lock.lock();
         try {
             UserQueryRespDTO userQueryRespDTO = queryUserByUsername(username);
-            UserDeletionDO userDeletionDO =new UserDeletionDO();
+            UserDeletionDO userDeletionDO = new UserDeletionDO();
             userDeletionDO.setIdType(userQueryRespDTO.getIdType());
             userDeletionDO.setIdCard(userQueryRespDTO.getIdCard());
             userDeletionMapper.insert(userDeletionDO);
@@ -190,7 +189,7 @@ public class UserServiceImpl implements UserService {
             userPhoneDO.setDeletionTime(System.currentTimeMillis());
             userPhoneMapper.deletionUser(userPhoneDO);
             if (StrUtil.isNotBlank(userQueryRespDTO.getMail())) {
-                UserMailDO userMailDO =new UserMailDO();
+                UserMailDO userMailDO = new UserMailDO();
                 userMailDO.setMail(userQueryRespDTO.getMail());
                 userMailDO.setDeletionTime(System.currentTimeMillis());
                 userMailMapper.deletionUser(userMailDO);
@@ -243,7 +242,6 @@ public class UserServiceImpl implements UserService {
                     .realName(userDO.getRealName())
                     .build();
             String accessToken = JWTUtil.generateAccessToken(userInfo);
-            //TODO 重复登陆问题
             UserLoginRespDTO actual = new UserLoginRespDTO();
             actual.setUserId(userInfo.getUserId());
             actual.setUsername(requestParam.getUsernameOrMailOrPhone());

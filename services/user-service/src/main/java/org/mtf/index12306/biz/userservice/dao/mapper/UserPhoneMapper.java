@@ -13,5 +13,5 @@ public interface UserPhoneMapper extends BaseMapper<UserPhoneDO> {
      * 注销用户
      * @param userPhoneDO 注销用户入参
      */
-    void deletionUser(@Param("userPhoneDO") UserPhoneDO userPhoneDO);
+    void deletionUser(UserPhoneDO userPhoneDO);
 }
