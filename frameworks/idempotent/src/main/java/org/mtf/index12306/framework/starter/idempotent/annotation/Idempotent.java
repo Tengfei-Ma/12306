@@ -27,7 +27,7 @@ public @interface Idempotent {
     /**
      * 验证幂等类型，支持多种幂等方式
      * RestAPI 建议使用 {@link IdempotentTypeEnum#TOKEN} 或 {@link IdempotentTypeEnum#PARAM}
-     * 其它类型幂等验证，使用 {@link IdempotentTypeEnum#SPEL}
+     * MQ 建议使用 {@link IdempotentTypeEnum#SPEL}
      */
     IdempotentTypeEnum type() default IdempotentTypeEnum.PARAM;
 
