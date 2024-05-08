@@ -1,4 +1,4 @@
-package org.mtf.index12306.biz.userservice.service.handler.filter.user;
+package org.mtf.index12306.biz.userservice.service.handler.filter;
 
 
 import org.mtf.index12306.biz.userservice.common.enums.UserChainMarkEnum;
