@@ -1,6 +1,7 @@
 package org.mtf.index12306.biz.ticketservice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 import org.mtf.index12306.framework.starter.database.base.BaseDO;
 
@@ -8,6 +9,7 @@ import org.mtf.index12306.framework.starter.database.base.BaseDO;
  * 车票实体
  */
 @Data
+@Builder
 @TableName("t_ticket")
 public class TicketDO extends BaseDO {
     /**
