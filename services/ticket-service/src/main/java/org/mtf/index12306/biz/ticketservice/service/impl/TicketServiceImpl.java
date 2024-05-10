@@ -28,6 +28,7 @@ import org.mtf.index12306.biz.ticketservice.service.handler.dto.TrainPurchaseTic
 import org.mtf.index12306.biz.ticketservice.service.handler.select.TrainSeatTypeSelector;
 import org.mtf.index12306.biz.ticketservice.toolkit.DateUtil;
 import org.mtf.index12306.biz.ticketservice.toolkit.TimeStringComparator;
+import org.mtf.index12306.framework.starter.bases.ApplicationContextHolder;
 import org.mtf.index12306.framework.starter.cache.DistributedCache;
 import org.mtf.index12306.framework.starter.cache.toolkit.CacheUtil;
 import org.mtf.index12306.framework.starter.convention.exception.ServiceException;
@@ -36,6 +37,7 @@ import org.mtf.index12306.framework.starter.designpattern.chain.AbstractChainCon
 import org.mtf.index12306.framework.starter.user.core.UserContext;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +59,7 @@ import static org.mtf.index12306.biz.ticketservice.toolkit.DateUtil.convertDateT
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> implements TicketService {
+public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> implements TicketService, CommandLineRunner {
     private final TrainMapper trainMapper;
     private final TrainStationRelationMapper trainStationRelationMapper;
     private final TrainStationPriceMapper trainStationPriceMapper;
@@ -69,7 +71,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
     private final AbstractChainContext<TicketPageQueryReqDTO> ticketPageQueryAbstractChainContext;
     private final AbstractChainContext<TicketPurchaseReqDTO> purchaseTicketAbstractChainContext;
     private final RedissonClient redissonClient;
-    private final TicketService ticketService;
+    private TicketService ticketService;
     @Override
     public TicketPageQueryRespDTO pageListTicketQueryV1(TicketPageQueryReqDTO requestParam) {
         ticketPageQueryAbstractChainContext.handler(TRAIN_QUERY_FILTER.name(), requestParam);
@@ -307,5 +309,10 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
             }
         }
         return trainBrandSet.stream().toList();
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        ticketService = ApplicationContextHolder.getBean(TicketService.class);
     }
 }

@@ -1,10 +1,7 @@
 package org.mtf.index12306.biz.ticketservice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.mtf.index12306.framework.starter.database.base.BaseDO;
 
 /**
@@ -35,7 +32,7 @@ public class SeatDO extends BaseDO {
     private String seatNumber;
 
     /**
-     * 座位类型
+     * 座位类型 0:商务座  1:一等座  2:二等座
      */
     private Integer seatType;
 
