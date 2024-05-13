@@ -1,6 +1,7 @@
 package org.mtf.index12306.biz.ticketservice.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.mtf.index12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPurchaseReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
@@ -12,10 +13,7 @@ import org.mtf.index12306.framework.starter.idempotent.enums.IdempotentSceneEnum
 import org.mtf.index12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 import org.mtf.index12306.framework.starter.log.annotation.ILog;
 import org.mtf.index12306.framework.starter.web.Results;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 车票控制层
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TicketController {
     private final TicketService ticketService;
+
     /**
      * 根据出发地区和目的地区分页查询车票
      */
@@ -31,6 +30,7 @@ public class TicketController {
     public Result<TicketPageQueryRespDTO> pageListTicketQuery(TicketPageQueryReqDTO requestParam) {
         return Results.success(ticketService.pageListTicketQueryV1(requestParam));
     }
+
     /**
      * 购买车票V1
      */
@@ -48,4 +48,16 @@ public class TicketController {
     public Result<TicketPurchaseRespDTO> purchaseTickets(@RequestBody TicketPurchaseReqDTO requestParam) {
         return Results.success(ticketService.purchaseTicketsV1(requestParam));
     }
+
+    /**
+     * 取消车票订单
+     */
+    @ILog
+    @PostMapping("/api/ticket-service/ticket/cancel")
+    public Result<Void> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
+        ticketService.cancelTicketOrder(requestParam);
+        return Results.success();
+    }
+
+
 }

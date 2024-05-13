@@ -2,6 +2,7 @@ package org.mtf.index12306.biz.ticketservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.mtf.index12306.biz.ticketservice.dao.entity.TicketDO;
+import org.mtf.index12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPurchaseReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
@@ -19,6 +20,7 @@ public interface TicketService extends IService<TicketDO> {
      * @return 查询车票返回结果
      */
     TicketPageQueryRespDTO pageListTicketQueryV1(TicketPageQueryReqDTO requestParam);
+
     /**
      * 购买车票V1
      *
@@ -34,4 +36,11 @@ public interface TicketService extends IService<TicketDO> {
      * @return 订单号
      */
     TicketPurchaseRespDTO executePurchaseTickets(@RequestBody TicketPurchaseReqDTO requestParam);
+
+    /**
+     * 取消车票订单
+     *
+     * @param requestParam 取消车票订单入参
+     */
+    void cancelTicketOrder(CancelTicketOrderReqDTO requestParam);
 }

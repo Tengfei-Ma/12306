@@ -2,8 +2,8 @@ package org.mtf.index12306.biz.ticketservice.remote;
 
 import org.mtf.index12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketOrderItemQueryReqDTO;
-import org.mtf.index12306.biz.ticketservice.dto.resp.TicketOrderDetailRespDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderCreateRemoteReqDTO;
+import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
 import org.mtf.index12306.framework.starter.convention.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
