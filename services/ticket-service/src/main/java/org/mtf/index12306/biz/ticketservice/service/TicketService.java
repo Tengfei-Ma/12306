@@ -7,6 +7,7 @@ import org.mtf.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPurchaseReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
+import org.mtf.index12306.biz.ticketservice.remote.dto.PayInfoRespDTO;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -43,4 +44,11 @@ public interface TicketService extends IService<TicketDO> {
      * @param requestParam 取消车票订单入参
      */
     void cancelTicketOrder(CancelTicketOrderReqDTO requestParam);
+    /**
+     * 支付单详情查询
+     *
+     * @param orderSn 订单号
+     * @return 支付单详情
+     */
+    PayInfoRespDTO getPayInfo(String orderSn);
 }

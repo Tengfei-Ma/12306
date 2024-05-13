@@ -21,7 +21,9 @@ import org.mtf.index12306.biz.ticketservice.dto.req.TicketPurchaseReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketDetailRespDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
 import org.mtf.index12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
+import org.mtf.index12306.biz.ticketservice.remote.PayRemoteService;
 import org.mtf.index12306.biz.ticketservice.remote.TicketOrderRemoteService;
+import org.mtf.index12306.biz.ticketservice.remote.dto.PayInfoRespDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderCreateRemoteReqDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderItemCreateRemoteReqDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
@@ -73,6 +75,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
     private final TrainStationPriceMapper trainStationPriceMapper;
     private final DistributedCache distributedCache;
     private final TicketOrderRemoteService ticketOrderRemoteService;
+    private final PayRemoteService payRemoteService;
     private final StationMapper stationMapper;
     private final SeatService seatService;
     private final TrainStationService trainStationService;
@@ -85,6 +88,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
     private TicketService ticketService;
     @Value("${ticket.availability.cache-update.type:}")
     private String ticketAvailabilityCacheUpdateType;
+
     @Override
     public TicketPageQueryRespDTO pageListTicketQueryV1(TicketPageQueryReqDTO requestParam) {
         ticketPageQueryAbstractChainContext.handler(TRAIN_QUERY_FILTER.name(), requestParam);
@@ -196,7 +200,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
             });
             each.setSeatClassList(seatClassList);
         }
-        TicketPageQueryRespDTO ticketPageQueryRespDTO=new TicketPageQueryRespDTO();
+        TicketPageQueryRespDTO ticketPageQueryRespDTO = new TicketPageQueryRespDTO();
         ticketPageQueryRespDTO.setTrainList(seatResults);
         ticketPageQueryRespDTO.setTrainBrandList(buildTrainBrandList(seatResults));
         ticketPageQueryRespDTO.setDepartureStationList(buildDepartureStationList(seatResults));
@@ -207,20 +211,21 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
 
     @Override
     public TicketPurchaseRespDTO purchaseTicketsV1(TicketPurchaseReqDTO requestParam) {
-        purchaseTicketAbstractChainContext.handler(TRAIN_PURCHASE_TICKET_FILTER.name(),requestParam);
+        purchaseTicketAbstractChainContext.handler(TRAIN_PURCHASE_TICKET_FILTER.name(), requestParam);
         RLock lock = redissonClient.getLock(String.format(LOCK_PURCHASE_TICKETS_V1, requestParam.getTrainId()));
-        try{
+        try {
             return ticketService.executePurchaseTickets(requestParam);
-        }finally {
+        } finally {
             lock.unlock();
         }
     }
+
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public TicketPurchaseRespDTO executePurchaseTickets(TicketPurchaseReqDTO requestParam) {
-        List<TicketDetailRespDTO> ticketDetailResults =new ArrayList<>();
-        String trainId=requestParam.getTrainId();
-        TrainDO trainDO=distributedCache.safeGet(
+        List<TicketDetailRespDTO> ticketDetailResults = new ArrayList<>();
+        String trainId = requestParam.getTrainId();
+        TrainDO trainDO = distributedCache.safeGet(
                 TRAIN_INFO + trainId,
                 TrainDO.class,
                 () -> trainMapper.selectById(trainId),
@@ -331,6 +336,11 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
                 throw ex;
             }
         }
+    }
+
+    @Override
+    public PayInfoRespDTO getPayInfo(String orderSn) {
+        return payRemoteService.getPayInfo(orderSn).getData();
     }
 
     private List<String> buildDepartureStationList(List<TicketListDTO> seatResults) {
