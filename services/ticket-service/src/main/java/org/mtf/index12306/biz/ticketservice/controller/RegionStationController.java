@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 地区以及车站查询控制层
+ * 地区以及车站控制层
  */
 @RestController
 @RequiredArgsConstructor
