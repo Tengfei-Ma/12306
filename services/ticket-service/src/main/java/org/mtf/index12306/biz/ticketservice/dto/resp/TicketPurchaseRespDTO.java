@@ -1,9 +1,7 @@
 package org.mtf.index12306.biz.ticketservice.dto.resp;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -22,5 +20,5 @@ public class TicketPurchaseRespDTO {
     /**
      * 乘车人订单详情
      */
-    private List<TicketOrderDetailRespDTO> ticketOrderDetails;
+    private List<TicketDetailRespDTO> ticketOrderDetails;
 }

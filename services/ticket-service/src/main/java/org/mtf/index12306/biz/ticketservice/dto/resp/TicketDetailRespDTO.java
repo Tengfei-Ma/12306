@@ -1,16 +1,14 @@
 package org.mtf.index12306.biz.ticketservice.dto.resp;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 车票订单详情返回参数
  */
 @Data
 @Builder
-public class TicketOrderDetailRespDTO {
+public class TicketDetailRespDTO {
 
     /**
      * 席别类型
