@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 支付单远程调用服务
  */
-@FeignClient(value = "index12306-pay${unique-name:}-service", url = "${aggregation.remote-url:}")
+@FeignClient(value = "index12306-pay-service", url = "${remote.pay-service.url}")
 public interface PayRemoteService {
 
     /**

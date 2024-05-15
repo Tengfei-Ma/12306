@@ -96,8 +96,13 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-user-service:
-  url: http://127.0.0.1:9001
+remote:
+  user-service:
+    url: http://127.0.0.1:9001
+  order-service:
+    url: http://127.0.0.1:9003
+  pay-service:
+    url: http://127.0.0.1:9004
 #ticket:
 #  availability:
 #    cache-update:

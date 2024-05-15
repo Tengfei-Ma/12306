@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * 车票订单远程服务调用
  */
-@FeignClient(value = "index12306-order${unique-name:}-service", url = "${aggregation.remote-url:}")
-public interface TicketOrderRemoteService {
+@FeignClient(value = "index12306-order-service", url = "${remote.order-service.url}")
+public interface OrderRemoteService {
 
     /**
      * 跟据订单号查询车票订单
