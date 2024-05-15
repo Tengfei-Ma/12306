@@ -344,10 +344,10 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
         }
         RefundReqDTO refundReqDTO = new RefundReqDTO();
         if (RefundTypeEnum.PARTIAL_REFUND.getType().equals(requestParam.getType())) {
-            TicketOrderItemQueryReqDTO ticketOrderItemQueryReqDTO = new TicketOrderItemQueryReqDTO();
-            ticketOrderItemQueryReqDTO.setOrderSn(requestParam.getOrderSn());
-            ticketOrderItemQueryReqDTO.setOrderItemRecordIds(requestParam.getSubOrderRecordIdReqList());
-            Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById = orderRemoteService.queryTicketItemOrderById(ticketOrderItemQueryReqDTO);
+            OrderItemQueryReqDTO orderItemQueryReqDTO = new OrderItemQueryReqDTO();
+            orderItemQueryReqDTO.setOrderSn(requestParam.getOrderSn());
+            orderItemQueryReqDTO.setOrderItemRecordIds(requestParam.getSubOrderRecordIdReqList());
+            Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById = orderRemoteService.queryTicketItemOrderById(orderItemQueryReqDTO);
             List<TicketOrderPassengerDetailRespDTO> partialRefundPassengerDetails = passengerDetails.stream()
                     .filter(item -> queryTicketItemOrderById.getData().contains(item))
                     .collect(Collectors.toList());
@@ -428,7 +428,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
                     .eq(TrainStationRelationDO::getDeparture, requestParam.getDeparture())
                     .eq(TrainStationRelationDO::getArrival, requestParam.getArrival());
             TrainStationRelationDO trainStationRelationDO = trainStationRelationMapper.selectOne(queryWrapper);
-            TicketOrderCreateRemoteReqDTO orderCreateRemoteReqDTO = TicketOrderCreateRemoteReqDTO.builder()
+            OrderCreateReqDTO orderCreateRemoteReqDTO = OrderCreateReqDTO.builder()
                     .departure(requestParam.getDeparture())
                     .arrival(requestParam.getArrival())
                     .orderTime(new Date())

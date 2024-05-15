@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TicketOrderCreateRemoteReqDTO {
+public class OrderCreateReqDTO {
 
     /**
      * 用户 ID

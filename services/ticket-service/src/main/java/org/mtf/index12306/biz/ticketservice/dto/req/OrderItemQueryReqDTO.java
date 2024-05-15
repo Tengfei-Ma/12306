@@ -8,7 +8,7 @@ import java.util.List;
  * 车票子订单查询
  */
 @Data
-public class TicketOrderItemQueryReqDTO {
+public class OrderItemQueryReqDTO {
 
     /**
      * 订单号
