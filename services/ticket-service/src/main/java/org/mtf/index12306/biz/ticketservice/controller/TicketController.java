@@ -1,7 +1,7 @@
 package org.mtf.index12306.biz.ticketservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.mtf.index12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
+import org.mtf.index12306.biz.ticketservice.dto.req.OrderCancelReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.RefundTicketReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPurchaseReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
@@ -75,7 +75,7 @@ public class TicketController {
      */
     @ILog
     @PostMapping("/api/ticket-service/ticket/cancel")
-    public Result<Void> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
+    public Result<Void> cancelTicketOrder(@RequestBody OrderCancelReqDTO requestParam) {
         ticketService.cancelTicketOrder(requestParam);
         return Results.success();
     }

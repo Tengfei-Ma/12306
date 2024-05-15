@@ -289,7 +289,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
 
 
     @Override
-    public void cancelTicketOrder(CancelTicketOrderReqDTO requestParam) {
+    public void cancelTicketOrder(OrderCancelReqDTO requestParam) {
         Result<Void> cancelOrderResult = orderRemoteService.cancelTicketOrder(requestParam);
         if (cancelOrderResult.isSuccess() && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
             Result<org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> ticketOrderDetailResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());

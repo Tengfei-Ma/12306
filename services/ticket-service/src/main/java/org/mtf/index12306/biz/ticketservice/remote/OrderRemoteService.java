@@ -1,6 +1,6 @@
 package org.mtf.index12306.biz.ticketservice.remote;
 
-import org.mtf.index12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
+import org.mtf.index12306.biz.ticketservice.dto.req.OrderCancelReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketOrderItemQueryReqDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderCreateRemoteReqDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
@@ -27,14 +27,14 @@ public interface OrderRemoteService {
      * @param orderSn 列车订单号
      * @return 列车订单记录
      */
-    @GetMapping("/api/order-service/order/ticket/query")
+    @GetMapping("/api/order-service/order")
     Result<TicketOrderDetailRespDTO> queryTicketOrderByOrderSn(@RequestParam(value = "orderSn") String orderSn);
 
 
     /**
      * 跟据子订单记录id查询车票子订单详情
      */
-    @GetMapping("/api/order-service/order/item/ticket/query")
+    @GetMapping("/api/order-service/order-items")
     Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById(@SpringQueryMap TicketOrderItemQueryReqDTO requestParam);
 
     /**
@@ -43,7 +43,7 @@ public interface OrderRemoteService {
      * @param requestParam 创建车票订单请求参数
      * @return 订单号
      */
-    @PostMapping("/api/order-service/order/ticket/create")
+    @PostMapping("/api/order-service/order/create")
     Result<String> createTicketOrder(@RequestBody TicketOrderCreateRemoteReqDTO requestParam);
 
     /**
@@ -52,8 +52,8 @@ public interface OrderRemoteService {
      * @param requestParam 车票订单关闭入参
      * @return 关闭订单返回结果
      */
-    @PostMapping("/api/order-service/order/ticket/close")
-    Result<Boolean> closeTickOrder(@RequestBody CancelTicketOrderReqDTO requestParam);
+    @PostMapping("/api/order-service/order/close")
+    Result<Boolean> closeTickOrder(@RequestBody OrderCancelReqDTO requestParam);
 
     /**
      * 车票订单取消
@@ -61,6 +61,6 @@ public interface OrderRemoteService {
      * @param requestParam 车票订单取消入参
      * @return 订单取消返回结果
      */
-    @PostMapping("/api/order-service/order/ticket/cancel")
-    Result<Void> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam);
+    @PostMapping("/api/order-service/order/cancel")
+    Result<Void> cancelTicketOrder(@RequestBody OrderCancelReqDTO requestParam);
 }
