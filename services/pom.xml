@@ -17,6 +17,7 @@
         <module>ticket-service</module>
         <module>pay-service</module>
         <module>order-service</module>
+        <module>gateway-service</module>
     </modules>
 
 
