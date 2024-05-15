@@ -19,12 +19,12 @@ public interface PayRemoteService {
     /**
      * 支付单详情查询
      */
-    @GetMapping("/api/pay-service/pay/query")
+    @GetMapping("/api/pay-service/pay/order-sn")
     Result<PayInfoRespDTO> getPayInfo(@RequestParam(value = "orderSn") String orderSn);
 
     /**
      * 公共退款接口
      */
-    @PostMapping("/api/pay-service/common/refund")
+    @PostMapping("/api/pay-service/refund")
     Result<RefundRespDTO> commonRefund(@RequestBody RefundReqDTO requestParam);
 }
