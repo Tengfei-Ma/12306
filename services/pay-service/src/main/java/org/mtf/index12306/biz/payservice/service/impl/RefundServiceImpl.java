@@ -21,7 +21,7 @@ import org.mtf.index12306.biz.payservice.dto.resp.RefundCreateDTO;
 import org.mtf.index12306.biz.payservice.dto.resp.RefundRespDTO;
 import org.mtf.index12306.biz.payservice.mq.event.RefundResultCallbackOrderEvent;
 import org.mtf.index12306.biz.payservice.mq.produce.RefundResultCallbackOrderSendProduce;
-import org.mtf.index12306.biz.payservice.remote.TicketOrderRemoteService;
+import org.mtf.index12306.biz.payservice.remote.OrderRemoteService;
 import org.mtf.index12306.biz.payservice.remote.dto.TicketOrderDetailRespDTO;
 import org.mtf.index12306.biz.payservice.service.RefundService;
 import org.mtf.index12306.framework.starter.common.toolkit.BeanUtil;
@@ -45,7 +45,7 @@ import java.util.Objects;
 public class RefundServiceImpl extends ServiceImpl<RefundMapper, RefundDO> implements RefundService {
 
     private final PayMapper payMapper;
-    private final TicketOrderRemoteService ticketOrderRemoteService;
+    private final OrderRemoteService orderRemoteService;
     private final AbstractStrategyChoose abstractStrategyChoose;
     private final RefundResultCallbackOrderSendProduce refundResultCallbackOrderSendProduce;
 
@@ -105,7 +105,7 @@ public class RefundServiceImpl extends ServiceImpl<RefundMapper, RefundDO> imple
     }
 
     private void createRefund(RefundCreateDTO requestParam) {
-        Result<TicketOrderDetailRespDTO> queryTicketResult = ticketOrderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
+        Result<TicketOrderDetailRespDTO> queryTicketResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
         if (!queryTicketResult.isSuccess() && Objects.isNull(queryTicketResult.getData())) {
             throw new ServiceException("车票订单不存在");
         }
