@@ -3,8 +3,8 @@ package org.mtf.index12306.biz.ticketservice.remote;
 import org.mtf.index12306.biz.ticketservice.dto.req.OrderCancelReqDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.OrderItemQueryReqDTO;
 import org.mtf.index12306.biz.ticketservice.remote.dto.OrderCreateReqDTO;
-import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
-import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
+import org.mtf.index12306.biz.ticketservice.remote.dto.OrderInfoRespDTO;
+import org.mtf.index12306.biz.ticketservice.remote.dto.OrderItemRespDTO;
 import org.mtf.index12306.framework.starter.convention.result.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
@@ -28,14 +28,14 @@ public interface OrderRemoteService {
      * @return 列车订单记录
      */
     @GetMapping("/api/order-service/order")
-    Result<TicketOrderDetailRespDTO> queryTicketOrderByOrderSn(@RequestParam(value = "orderSn") String orderSn);
+    Result<OrderInfoRespDTO> queryTicketOrderByOrderSn(@RequestParam(value = "orderSn") String orderSn);
 
 
     /**
      * 跟据子订单记录id查询车票子订单详情
      */
     @GetMapping("/api/order-service/order-items")
-    Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById(@SpringQueryMap OrderItemQueryReqDTO requestParam);
+    Result<List<OrderItemRespDTO>> queryTicketItemOrderById(@SpringQueryMap OrderItemQueryReqDTO requestParam);
 
     /**
      * 创建车票订单
@@ -62,5 +62,5 @@ public interface OrderRemoteService {
      * @return 订单取消返回结果
      */
     @PostMapping("/api/order-service/order/cancel")
-    Result<Void> cancelTicketOrder(@RequestBody OrderCancelReqDTO requestParam);
+    Result<Boolean> cancelTicketOrder(@RequestBody OrderCancelReqDTO requestParam);
 }

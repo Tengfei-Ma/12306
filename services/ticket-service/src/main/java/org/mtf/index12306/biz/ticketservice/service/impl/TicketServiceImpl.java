@@ -290,14 +290,14 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
 
     @Override
     public void cancelTicketOrder(OrderCancelReqDTO requestParam) {
-        Result<Void> cancelOrderResult = orderRemoteService.cancelTicketOrder(requestParam);
+        Result<Boolean> cancelOrderResult = orderRemoteService.cancelTicketOrder(requestParam);
         if (cancelOrderResult.isSuccess() && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
-            Result<org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> ticketOrderDetailResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
-            org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO ticketOrderDetail = ticketOrderDetailResult.getData();
+            Result<OrderInfoRespDTO> ticketOrderDetailResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
+            OrderInfoRespDTO ticketOrderDetail = ticketOrderDetailResult.getData();
             String trainId = String.valueOf(ticketOrderDetail.getTrainId());
             String departure = ticketOrderDetail.getDeparture();
             String arrival = ticketOrderDetail.getArrival();
-            List<TicketOrderPassengerDetailRespDTO> trainPurchaseTicketResults = ticketOrderDetail.getPassengerDetails();
+            List<OrderItemRespDTO> trainPurchaseTicketResults = ticketOrderDetail.getPassengerDetails();
             try {
                 seatService.unlock(trainId, departure, arrival, BeanUtil.convert(trainPurchaseTicketResults, TrainPurchaseTicketRespDTO.class));
             } catch (Throwable ex) {
@@ -307,8 +307,8 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
             ticketAvailabilityTokenBucket.rollbackInBucket(ticketOrderDetail);
             try {
                 StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
-                Map<Integer, List<TicketOrderPassengerDetailRespDTO>> seatTypeMap = trainPurchaseTicketResults.stream()
-                        .collect(Collectors.groupingBy(TicketOrderPassengerDetailRespDTO::getSeatType));
+                Map<Integer, List<OrderItemRespDTO>> seatTypeMap = trainPurchaseTicketResults.stream()
+                        .collect(Collectors.groupingBy(OrderItemRespDTO::getSeatType));
                 List<RouteDTO> routeDTOList = trainStationService.listTakeoutTrainStationRoute(trainId, departure, arrival);
                 routeDTOList.forEach(each -> {
                     String keySuffix = StrUtil.join("_", trainId, each.getStartStation(), each.getEndStation());
@@ -333,12 +333,12 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
     public RefundTicketRespDTO commonTicketRefund(RefundTicketReqDTO requestParam) {
         // 责任链模式，验证 1：参数必填
         refundReqDTOAbstractChainContext.handler(TicketChainMarkEnum.TRAIN_REFUND_TICKET_FILTER.name(), requestParam);
-        Result<org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> orderDetailRespDTOResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
+        Result<OrderInfoRespDTO> orderDetailRespDTOResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
         if (!orderDetailRespDTOResult.isSuccess() && Objects.isNull(orderDetailRespDTOResult.getData())) {
             throw new ServiceException("车票订单不存在");
         }
-        org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO ticketOrderDetailRespDTO = orderDetailRespDTOResult.getData();
-        List<TicketOrderPassengerDetailRespDTO> passengerDetails = ticketOrderDetailRespDTO.getPassengerDetails();
+        OrderInfoRespDTO orderInfoRespDTO = orderDetailRespDTOResult.getData();
+        List<OrderItemRespDTO> passengerDetails = orderInfoRespDTO.getPassengerDetails();
         if (CollectionUtil.isEmpty(passengerDetails)) {
             throw new ServiceException("车票子订单不存在");
         }
@@ -347,8 +347,8 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
             OrderItemQueryReqDTO orderItemQueryReqDTO = new OrderItemQueryReqDTO();
             orderItemQueryReqDTO.setOrderSn(requestParam.getOrderSn());
             orderItemQueryReqDTO.setOrderItemRecordIds(requestParam.getSubOrderRecordIdReqList());
-            Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById = orderRemoteService.queryTicketItemOrderById(orderItemQueryReqDTO);
-            List<TicketOrderPassengerDetailRespDTO> partialRefundPassengerDetails = passengerDetails.stream()
+            Result<List<OrderItemRespDTO>> queryTicketItemOrderById = orderRemoteService.queryTicketItemOrderById(orderItemQueryReqDTO);
+            List<OrderItemRespDTO> partialRefundPassengerDetails = passengerDetails.stream()
                     .filter(item -> queryTicketItemOrderById.getData().contains(item))
                     .collect(Collectors.toList());
             refundReqDTO.setRefundTypeEnum(RefundTypeEnum.PARTIAL_REFUND);
@@ -359,7 +359,7 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
         }
         if (CollectionUtil.isNotEmpty(passengerDetails)) {
             Integer partialRefundAmount = passengerDetails.stream()
-                    .mapToInt(TicketOrderPassengerDetailRespDTO::getAmount)
+                    .mapToInt(OrderItemRespDTO::getAmount)
                     .sum();
             refundReqDTO.setRefundAmount(partialRefundAmount);
         }

@@ -14,8 +14,8 @@ import org.mtf.index12306.biz.ticketservice.dto.domain.PurchaseTicketPassengerDe
 import org.mtf.index12306.biz.ticketservice.dto.domain.RouteDTO;
 import org.mtf.index12306.biz.ticketservice.dto.domain.SeatTypeCountDTO;
 import org.mtf.index12306.biz.ticketservice.dto.req.TicketPurchaseReqDTO;
-import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
-import org.mtf.index12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
+import org.mtf.index12306.biz.ticketservice.remote.dto.OrderInfoRespDTO;
+import org.mtf.index12306.biz.ticketservice.remote.dto.OrderItemRespDTO;
 import org.mtf.index12306.biz.ticketservice.service.SeatService;
 import org.mtf.index12306.biz.ticketservice.service.TrainStationService;
 import org.mtf.index12306.biz.ticketservice.service.handler.dto.TokenResultDTO;
@@ -133,7 +133,7 @@ public final class TicketAvailabilityTokenBucket {
      *
      * @param requestParam 回滚列车余量令牌入参
      */
-    public void rollbackInBucket(TicketOrderDetailRespDTO requestParam) {
+    public void rollbackInBucket(OrderInfoRespDTO requestParam) {
         DefaultRedisScript<Long> actual = Singleton.get(LUA_TICKET_AVAILABILITY_ROLLBACK_TOKEN_BUCKET_PATH, () -> {
             DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
             redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(LUA_TICKET_AVAILABILITY_ROLLBACK_TOKEN_BUCKET_PATH)));
@@ -141,9 +141,9 @@ public final class TicketAvailabilityTokenBucket {
             return redisScript;
         });
         Assert.notNull(actual);
-        List<TicketOrderPassengerDetailRespDTO> passengerDetails = requestParam.getPassengerDetails();
+        List<OrderItemRespDTO> passengerDetails = requestParam.getPassengerDetails();
         Map<Integer, Long> seatTypeCountMap = passengerDetails.stream()
-                .collect(Collectors.groupingBy(TicketOrderPassengerDetailRespDTO::getSeatType, Collectors.counting()));
+                .collect(Collectors.groupingBy(OrderItemRespDTO::getSeatType, Collectors.counting()));
         JSONArray seatTypeCountArray = seatTypeCountMap.entrySet().stream()
                 .map(entry -> {
                     JSONObject jsonObject = new JSONObject();

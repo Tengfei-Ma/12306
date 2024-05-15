@@ -10,7 +10,7 @@ import java.util.List;
  * 车票订单详情返回参数
  */
 @Data
-public class TicketOrderDetailRespDTO {
+public class OrderInfoRespDTO {
 
     /**
      * 订单号
@@ -64,5 +64,5 @@ public class TicketOrderDetailRespDTO {
     /**
      * 乘车人订单详情
      */
-    private List<TicketOrderPassengerDetailRespDTO> passengerDetails;
+    private List<OrderItemRespDTO> passengerDetails;
 }

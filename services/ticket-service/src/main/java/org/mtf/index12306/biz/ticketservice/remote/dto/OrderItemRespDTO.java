@@ -1,15 +1,12 @@
 package org.mtf.index12306.biz.ticketservice.remote.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 车票订单详情返回参数
  */
 @Data
-public class TicketOrderPassengerDetailRespDTO {
+public class OrderItemRespDTO {
 
     /**
      * 用户id

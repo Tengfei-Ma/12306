@@ -29,5 +29,5 @@ public class RefundReqDTO {
     /**
      * 部分退款车票详情集合
      */
-    private List<TicketOrderPassengerDetailRespDTO> refundDetailReqDTOList;
+    private List<OrderItemRespDTO> refundDetailReqDTOList;
 }
