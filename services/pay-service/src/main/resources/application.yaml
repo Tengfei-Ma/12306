@@ -68,3 +68,6 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+remote:
+  order-service:
+    url: http://127.0.0.1:9003
