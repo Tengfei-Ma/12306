@@ -57,3 +57,6 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+remote:
+  user-service:
+    url: http://127.0.0.1:9001

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 用户远程服务调用
  */
-@FeignClient(value = "index12306-user${unique-name:}-service", url = "${aggregation.remote-url:}")
+@FeignClient(value = "index12306-user-service", url = "${remote.user-service.url}")
 public interface UserRemoteService {
 
     /**
