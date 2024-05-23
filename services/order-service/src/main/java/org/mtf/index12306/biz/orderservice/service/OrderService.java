@@ -2,12 +2,14 @@ package org.mtf.index12306.biz.orderservice.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.mtf.index12306.biz.orderservice.dao.entity.OrderDO;
+import org.mtf.index12306.biz.orderservice.dto.domain.OrderStatusReversalDTO;
 import org.mtf.index12306.biz.orderservice.dto.req.OrderCancelReqDTO;
 import org.mtf.index12306.biz.orderservice.dto.req.OrderCreateReqDTO;
 import org.mtf.index12306.biz.orderservice.dto.req.OrderPageQueryReqDTO;
 import org.mtf.index12306.biz.orderservice.dto.req.SelfOrderPageQueryReqDTO;
 import org.mtf.index12306.biz.orderservice.dto.resp.OrderInfoRespDTO;
 import org.mtf.index12306.biz.orderservice.dto.resp.SelfOrderInfoRespDTO;
+import org.mtf.index12306.biz.orderservice.mq.event.PayResultCallbackOrderEvent;
 import org.mtf.index12306.framework.starter.convention.page.PageResponse;
 
 /**
@@ -50,4 +52,17 @@ public interface OrderService extends IService<OrderDO> {
      * @param requestParam 取消订单请求参数
      */
     boolean cancelOrder(OrderCancelReqDTO requestParam);
+    /**
+     * 订单状态反转
+     *
+     * @param requestParam 请求参数
+     */
+    void statusReversal(OrderStatusReversalDTO requestParam);
+
+    /**
+     * 支付结果回调订单
+     *
+     * @param requestParam 请求参数
+     */
+    void payCallbackOrder(PayResultCallbackOrderEvent requestParam);
 }
