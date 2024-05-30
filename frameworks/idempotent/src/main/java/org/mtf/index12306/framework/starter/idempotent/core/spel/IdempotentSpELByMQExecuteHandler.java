@@ -35,12 +35,16 @@ public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentEx
 
     @Override
     public void handler(IdempotentParamWrapper wrapper) {
+        //redis中存储标识该消息消费状态的key
         String uniqueKey = wrapper.getIdempotent().uniqueKeyPrefix() + wrapper.getLockKey();
+        //使用setnx命令设置该消息的消费状态为消费中
         Boolean setIfAbsent = ((StringRedisTemplate) distributedCache.getInstance())
                 .opsForValue()
                 .setIfAbsent(uniqueKey, IdempotentMQConsumeStatusEnum.CONSUMING.getCode(), TIMEOUT, TimeUnit.SECONDS);
+        //setnx命令执行失败，说明消息已经在消费中或已消费
         if (setIfAbsent != null && !setIfAbsent) {
             String consumeStatus = distributedCache.get(uniqueKey, String.class);
+            //如果该消息当前的消费状态已经是消费中，则证明此次消费为重复消费，打印日志并抛重复消费异常
             boolean error = IdempotentMQConsumeStatusEnum.isError(consumeStatus);
             LogUtil.getLog(wrapper.getJoinPoint()).warn("[{}] MQ repeated consumption, {}.", uniqueKey, error ? "Wait for the client to delay consumption" : "Status is completed");
             throw new RepeatConsumptionException(error);
