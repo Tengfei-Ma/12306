@@ -44,7 +44,8 @@ public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentEx
         //setnx命令执行失败，说明消息已经在消费中或已消费
         if (setIfAbsent != null && !setIfAbsent) {
             String consumeStatus = distributedCache.get(uniqueKey, String.class);
-            //如果该消息当前的消费状态已经是消费中，则证明此次消费为重复消费，打印日志并抛重复消费异常
+            // 如果该消息在redis中的消费状态是消费中，则抛出重复消费异常，发送延迟消息，过段时间尝试再次消费
+            // 如果该消息在redis中的消费状态是已消费，则抛出重复消费异常，直接返回即可
             boolean error = IdempotentMQConsumeStatusEnum.isError(consumeStatus);
             LogUtil.getLog(wrapper.getJoinPoint()).warn("[{}] MQ repeated consumption, {}.", uniqueKey, error ? "Wait for the client to delay consumption" : "Status is completed");
             throw new RepeatConsumptionException(error);

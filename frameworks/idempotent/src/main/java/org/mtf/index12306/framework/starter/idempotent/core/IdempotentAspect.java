@@ -27,17 +27,14 @@ public final class IdempotentAspect {
             resultObj = joinPoint.proceed();
             instance.postProcessing();
         } catch (RepeatConsumptionException ex) {
-            /**
-             * 触发幂等逻辑时可能有两种情况：
-             *    * 1. 消息还在处理，但是不确定是否执行成功，那么需要返回错误，方便 RocketMQ 再次通过重试队列投递
-             *    * 2. 消息处理成功了，该消息直接返回成功即可
-             */
+            //此次消费为重复消费，redis中消息状态是已消费，直接返回即可
             if (!ex.getError()) {
                 return null;
             }
+            //此次消费为重复消费，redis中消息状态是消费中，等待 RocketMQ 再次通过重试队列投递
             throw ex;
         } catch (Throwable ex) {
-            // 客户端消费存在异常，需要删除幂等标识方便下次 RocketMQ 再次通过重试队列投递
+            // 消费业务逻辑抛出异常，删除幂等标识，等待 RocketMQ 再次通过重试队列投递
             instance.exceptionProcessing();
             throw ex;
         } finally {
