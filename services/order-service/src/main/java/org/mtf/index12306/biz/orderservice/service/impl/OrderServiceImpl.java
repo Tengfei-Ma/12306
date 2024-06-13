@@ -220,6 +220,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, OrderDO> implemen
                 .eq(OrderDO::getOrderSn, orderSn)
                 .select(OrderDO::getStatus);
         OrderDO orderDO = baseMapper.selectOne(queryWrapper);
+        //订单完成
         if (Objects.isNull(orderDO) || orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
             return false;
         }
