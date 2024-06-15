@@ -94,6 +94,7 @@ public final class TrainSeatTypeSelector {
             }
             throw ex;
         }
+        //购票明细，每条明细填充乘车人身份信息和金额
         actualResult.forEach(each -> {
             String passengerId = each.getPassengerId();
             passengerRemoteResultList.stream()
